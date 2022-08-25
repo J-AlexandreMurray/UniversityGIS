@@ -9,9 +9,9 @@ outfileGDB = r"C:\GIS\Temp\test.gdb"
 
 if not arcpy.Exists(r"C:\GIS\Temp\test.gdb\polygons"):
 arcpy.TableToTable_conversion(in_rows=polygonsFile,
-out_path="C:\GIS\Temp\test.gdb",
-out_name="polygons",
-where_clause="")
+out_path = "C:\GIS\Temp\test.gdb",
+out_name = "polygons",
+where_clause = "")
 
 
 arcpy.env.workspace = outfileGDB
