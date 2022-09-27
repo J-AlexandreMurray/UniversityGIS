@@ -1,6 +1,6 @@
 import arcpy
 import os
-folder = "C:\Mary Flores\Downloads"
+folder = "C:\John Murray\downloads"
 os.chdir(folder)
 polygonsFile = "properties_module_7"
 
