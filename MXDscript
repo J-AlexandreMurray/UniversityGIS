@@ -1,21 +1,26 @@
-# Purpose: This script will iterate through each MXD in a folder and report 
-information about each
-#          map document, it's data frames and layers.  The script is intended to
-run from a script
-#          tool that requires two input parameters:
+# Purpose: This script will iterate through each MXD file in a folder and report 
+information about each map document, data frames and layers.  
+# The script is intended to run from a script tool that requires two input parameters:
 #               1) folder containing MXDs,
 #               2) an output text file.
 #
-#          The resulting text file will automatically open.
+# The resulting text file will automatically open.
+
+
+
 import arcpy, datetime, os
+
 try:
     arcpy.gp.overwriteOutput = True
-    #Read input parameters from GP dialog
+    
+    # Here, the input parameters from GP dialog are read
     folderPath = arcpy.GetParameterAsText(0)
     output = arcpy.GetParameterAsText(1)
-    #Create an output file
+    
+    # Create the output file
     outFile = open(output, "w")
-    #Report header
+    
+    # Report header
     outFile.write("MXD REPORT: \n")
     outFile.write("\n")
     outFile.write("This report is for all MXDs in a folder.  It lists relevant 
@@ -26,25 +31,28 @@ information for each MXD\n")
     outFile.write("\n")
     outFile.write("Date: " + str(datetime.datetime.today().strftime("%B %d, 
 %Y")) + "\n")
-    #Loop through each MXD file
+
+    # Use for loop to iterate through each MXD file
     count = 0
     for filename in os.listdir(folderPath):
         fullpath = os.path.join(folderPath, filename)
         if os.path.isfile(fullpath):
             if filename.lower().endswith(".mxd"):
-                #Reference MXD
+            
+                # This is the reference MXD
                 mxd = arcpy.mapping.MapDocument(fullpath)
                 count = 1
-                #Format output value
-                if mxd.author =="": authorValue = "None"
+                
+                # Format output value
+                if mxd.author == "": authorValue = "None"
                 else: authorValue = mxd.author
-                if mxd.summary =="": summaryValue = "None"
+                if mxd.summary == "": summaryValue = "None"
                 else: summaryValue = mxd.summary
                 BDS = arcpy.mapping.ListBrokenDataSources(mxd)
                 if len(BDS) == 0: BDSValue = "None"
                 else: BDSValue = "A total of " + str(len(BDS)) + " broken data 
 source(s)."
-                #Write MXD data to file
+                # Write MXD data to file
                 outFile.write("\n")
                 outFile.write("\n")
 outFile.write("-----------------------------------------------------------------
@@ -62,13 +70,17 @@ outFile.write("-----------------------------------------------------------------
                 outFile.write("\t Relative Paths:       " + 
 str(mxd.relativePaths) + "\n")
                 outFile.write("\t Broken Data Sources:  " + BDSValue + "\n")
-                #Reference each data frame and report data
+                
+                
+                # Reference each data frame and report data
                 DFList = arcpy.mapping.ListDataFrames(mxd)
                 for df in DFList:
-                    #Format output values
+                
+                    # Formating output values
                     if df.description == "": descValue = "None"
                     else: descValue = df.description
-                    #Write data frame data to file
+                    
+                    # Write data frame data to file
                     outFile.write("\n")
                     outFile.write("\n")
                     outFile.write("\t DATA FRAME: " + df.name + "\n")
@@ -88,7 +100,8 @@ str(df.scale) + "\n")
                         outFile.write("\t\t Scale:              Unknown \n")
                     outFile.write("\t\t Rotation:           " + str(df.rotation)
 + "\n")
-                    #Reference each layer in a data frame
+
+                    # Reference each layer in a data frame
                     lyrList = arcpy.mapping.ListLayers(mxd, "", df)
                     for lyr in lyrList:
                         outFile.write("\n")
@@ -112,7 +125,8 @@ arcpy.Describe(lyr.dataSource).datasettype + "\n")
                             else: outFile.write("\t\t\t Query Definition:  " + 
 lyr.definitionQuery + "\n")
                         else: outFile.write("\t\t\t Query Definition:  N/A \n")
-                    #Reference each table in a data frame 
+                        
+                    # Reference each table in a data frame 
                     tableList = arcpy.mapping.ListTableViews(mxd, df, "")
                     for table in tableList:
                         outFile.write("\n")
@@ -136,9 +150,11 @@ outFile.write("-----------------------------------------------------------------
 outFile.write("-----------------------------------------------------------------
 ----------------- \n")                          
     outFile.close()
-    #Open resulting text file
+    
+    # Open resulting text file
     os.startfile(output)
-    #Delete variables that reference data on disk
+    
+    # Delete variables that reference data on disk
     del folderPath, output, outFile, fullpath
 except Exception, e:
   import traceback
